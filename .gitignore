@@ -1,0 +1,26 @@
+##########################
+# Unreal Generated Files #
+##########################
+*/Build
+*/Binaries
+*/DerivedDataCache
+*/Intermediate
+*/Saved
+*/Plugins
+
+#################################
+# Visual Studio Generated Files #
+#################################
+*/.db
+*/.vs
+
+
+#######################
+# Miscellaneous Files #
+#######################
+*.zip
+
+
+RAMA_savestring.png
+*.igs
+*.stp
