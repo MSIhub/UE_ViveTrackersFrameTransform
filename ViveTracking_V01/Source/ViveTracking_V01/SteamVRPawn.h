@@ -25,4 +25,33 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	
+};
+
+USTRUCT(BlueprintType)
+struct FTrackerDataStruct
+{
+	GENERATED_BODY()
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+		float timestamp;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FVector Position;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FVector LinearVelocity;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FVector LinearAcceleration;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FRotator Orientation;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FRotator AngularVelocity;
+
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tracker Data Struct")
+			FRotator AngularAcceleration;
 };
