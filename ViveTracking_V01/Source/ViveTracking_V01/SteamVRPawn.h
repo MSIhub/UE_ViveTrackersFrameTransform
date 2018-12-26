@@ -6,7 +6,7 @@
 #include "GameFramework/Pawn.h"
 #include "SteamVRPawn.generated.h"
 
-UCLASS()
+UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class VIVETRACKING_V01_API ASteamVRPawn : public APawn
 {
 	GENERATED_BODY()
@@ -26,8 +26,12 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	float AngleOffsetCorrector(float InAngle);
 	
 };
+
+
 
 USTRUCT(BlueprintType)
 struct FTrackerDataStruct

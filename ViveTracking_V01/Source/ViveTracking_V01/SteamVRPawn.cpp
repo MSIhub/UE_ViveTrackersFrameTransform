@@ -31,5 +31,13 @@ void ASteamVRPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 }
 
+float ASteamVRPawn::AngleOffsetCorrector(float InAngle)
+{
+	if (InAngle > 180.0f)
+	{
+		InAngle = InAngle - 360.0f;
+	}
 
+	return InAngle;
+}
 
