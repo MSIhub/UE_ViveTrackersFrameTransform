@@ -27,6 +27,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 		FMatrix TransformationMatrix(FRotator InRot, FVector InTrans);
 
-	 
+	UFUNCTION(BlueprintCallable)
+		FMatrix TransformationMatrix_Inverse(FMatrix InTransformationMatrix);
+
+	UFUNCTION(BlueprintCallable)
+		FMatrix TransformationMatrix_Multiply(FMatrix InTransformationMatrix1, FMatrix InTransformationMatrix2);
+
+	UFUNCTION(BlueprintCallable)
+		FVector TransformationMatrix_PositionExtract(FMatrix InTransformationMatrix);
+
+	UFUNCTION(BlueprintCallable)
+		FRotator TransformationMatrix_RotationRPYExtract(FMatrix InTransformationMatrix);
 		
 };
