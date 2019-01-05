@@ -38,8 +38,7 @@ void UTransformationMatrix_ViveTracker::TickComponent(float DeltaTime, ELevelTic
 
 FMatrix UTransformationMatrix_ViveTracker::TransformationMatrix(FRotator InRot, FVector InTrans)
 {
-	/**
-		PRY convention used
+	/**		
 		T = [A00 A01 A02 Px
 			 A10 A11 A12 Py
 			 A20 A21 A22 Pz
@@ -55,22 +54,6 @@ FMatrix UTransformationMatrix_ViveTracker::TransformationMatrix(FRotator InRot, 
 	float Px = InTrans.X;
 	float Py = InTrans.Y;
 	float Pz = InTrans.Z;
-
-	/*PRY convention*/
-	/*
-	//COLUMN0
-	float A00 = FMath::Cos(alpha)*FMath::Cos(beta) - FMath::Sin(alpha)*FMath::Sin(beta)*FMath::Sin(gamma);
-	float A10 = FMath::Cos(beta)*FMath::Sin(alpha) + FMath::Cos(alpha)*FMath::Sin(beta)*FMath::Sin(gamma);
-	float A20 = -1.f * FMath::Cos(gamma)*FMath::Sin(beta);
-	//COLUMN1
-	float A01 = -1.f * FMath::Cos(gamma)* FMath::Sin(alpha);
-	float A11 = FMath::Cos(alpha)*FMath::Cos(gamma);
-	float A21 = FMath::Sin(gamma);
-	//COLUMN2
-	float A02 = FMath::Cos(alpha)*FMath::Sin(beta) + FMath::Cos(beta)*FMath::Sin(alpha)*FMath::Sin(gamma);
-	float A12 = FMath::Sin(alpha)*FMath::Sin(beta) - FMath::Cos(alpha)*FMath::Cos(beta)*FMath::Sin(gamma);
-	float A22 = FMath::Cos(beta)*FMath::Cos(gamma);
-	*/
 
 	/*YPR convention  intrinsic Convention 3D Rotation matrix 
 	 %Intrinsic rotation notion used [ZYX of intrinsic = XYZ of extrinsic] */
@@ -328,20 +311,60 @@ FRotator UTransformationMatrix_ViveTracker::TransformationMatrix_RotationRPYExtr
 
 	// Calculating the euler angle from rotation matrix in radians
 	
-	/*- PRY convention used*/
-	/*
-	float yaw = atan2f((-1*A01),A11);
-	float pitch = atan2f((-1*A20),A22);
-	float roll = atan2f(A21,sqrtf(powf(A11,2)+ powf(A01, 2)));
-	*/
-
 	/**
 		YPR convention - ZYX intrinsic Convention 3D Rotation matrix 
 		Intrinsic rotation notion used [ZYX of intrinsic = XYZ of extrinsic]
+		// Matlab code for reference // full documentation available in https://github.com/MSIhub
+		%% Decompose rotation matrix to euler angle
+		% Taking into account gimbal lock and other Euler singularities
+
+		if(A_ZYX(1,3) ~= 1 && A_ZYX(1,3) ~= -1 )
+			%Solution 1 -- matches with matlab euler angle
+			pitch1 = asin(A_ZYX(1,3));
+			roll1 = atan2((-A_ZYX(2,3)/cos(pitch1)),(A_ZYX(3,3)/cos(pitch1)));
+			yaw1 = atan2((-1*A_ZYX(1,2)/cos(pitch1)),(A_ZYX(1,1)/cos(pitch1)));
+			calculatedEuler = [roll1, pitch1, yaw1]*(180/PI)
+		else
+			% To overcome gimbal lock and singularities
+			% Assign any value to roll, preferably zero
+			roll3 = 0;
+			if(A_ZYX(1,3) == -1)
+				pitch3 = -pi/2;
+				yaw3 = -atan2(-A_ZYX(2,1),A_ZYX(2,2));
+				calculatedEuler = [roll3, pitch3, yaw3]*(180/PI)
+			else
+				pitch4 = pi/2;
+				yaw4 = atan2(A_ZYX(2,1),A_ZYX(2,2));
+				calculatedEuler = [roll3, pitch4, yaw4]*(180/PI)
+			end
+		end
+
 	*/
-	float roll = atan2f(-A12,A22);
-	float pitch = atan2f(A01,sqrtf(powf(A00,2)+powf(A01,2)));
-	float yaw = atan2f(-A01,A00);
+	float roll;
+	float pitch;
+	float yaw;
+
+	if (A02 != 1 && A02 != -1)
+	{
+		pitch = asinf(A02);
+		roll = atan2f((-A12/cosf(pitch)),(A22/cosf(pitch)));
+		yaw = atan2f((-A01/cosf(pitch)), (A00/cosf(pitch)));
+	}
+	else
+	{
+		//To Overcome gimbal lock and Euler singularities
+		roll = 0;
+		if (A02 == -1)
+		{
+			pitch = -PI / 2;
+			yaw = -atan2f(-A10,A11);
+		}
+		else
+		{
+			pitch = PI / 2;
+			yaw = atan2f(A10,A11);
+		}
+	}
 
 	// Assigning the angles to the rotator converted to degrees
 	FRotator TransformedRPY;
